@@ -1,13 +1,13 @@
 # ParaBank Automation Suite
 
-Browser-based end-to-end tests for the [ParaBank demo application](https://parabank.parasoft.com/parabank/index.htm), built with Playwright and TypeScript. The suite demonstrates the Page Object Model, reusable page interactions, configurable test credentials, generated registration data, and HTML test reporting.
+Browser-based end-to-end tests for the [ParaBank demo application](https://parabank.parasoft.com/parabank/index.htm), built with Playwright and TypeScript. The suite demonstrates the Page Object Model, reusable page interactions, generated registration data, and HTML test reporting.
 
 ## What this project covers
 
-- Valid login and navigation to the account overview page.
+- Registration of a generated user, followed by logging out and logging in with that same user's credentials.
 - Rejected login with invalid credentials.
 - Login submission with blank fields.
-- A reusable registration page object and generated user data. The registration test is currently marked as skipped, so it does not run as part of the suite.
+- A reusable registration page object and generated user data.
 - Chromium-based browser execution and a GitHub Actions workflow for pushes and pull requests to `main` and `master`.
 
 ## Technology
@@ -24,7 +24,6 @@ Browser-based end-to-end tests for the [ParaBank demo application](https://parab
 
 - Node.js 20 or newer
 - npm
-- A ParaBank demo account for the successful login test
 
 ### Install
 
@@ -33,9 +32,9 @@ npm ci
 npx playwright install chromium
 ```
 
-### Configure credentials
+### Optional test data
 
-Copy `.env.example` to `.env`, then set `PARABANK_VALID_USERNAME` and `PARABANK_VALID_PASSWORD` to a working ParaBank demo account. The invalid-login test uses the two invalid credential values in the template; you can change them if needed.
+The valid-login test registers a fresh user and uses that user's generated credentials, so no pre-created account is needed. The invalid-login test uses `invalid-user` and `invalid-password` by default. To override those values locally, copy `.env.example` to `.env` and edit them.
 
 Never commit `.env` or real credentials. The `.env` file is ignored by Git.
 
@@ -51,7 +50,7 @@ Run just the login tests:
 npx playwright test tests/login.spec.ts
 ```
 
-The configured browser project is Chromium. The registration test is skipped until it is ready to run against the demo application.
+The configured browser project is Chromium. Registration tests create fresh accounts on the public ParaBank demo site.
 
 ## Reports
 
@@ -76,8 +75,9 @@ Test results and generated reports are local output and are excluded from Git.
 │   └── UserRegistrationPage.ts  # Registration page object
 ├── tests/
 │   ├── login.spec.ts            # Login scenarios
-│   └── registerUser.spec.ts     # Skipped registration scenario
+│   └── registerUser.spec.ts     # Registration scenario
 ├── utils/
+│   ├── registerTestUser.ts      # Shared test-user registration flow
 │   └── testDataGenerator.ts     # Generated registration data
 ├── .env.example                 # Safe local configuration template
 ├── package.json
@@ -86,13 +86,8 @@ Test results and generated reports are local output and are excluded from Git.
 
 ## CI
 
-The GitHub Actions workflow installs dependencies and Chromium, runs the Playwright suite, and uploads the HTML report. It reads these GitHub Actions repository secrets:
-
-- `PARABANK_VALID_USERNAME` and `PARABANK_VALID_PASSWORD`: a working ParaBank demo account.
-- `PARABANK_INVALID_USERNAME` and `PARABANK_INVALID_PASSWORD`: values for the rejected-login test.
-
-Add them under **Settings → Secrets and variables → Actions** for the repository. Don’t commit real credentials. Secrets are not available to workflows triggered by pull requests from forks, so the credential-dependent tests need to be handled separately for those runs.
+The GitHub Actions workflow installs dependencies and Chromium, runs the Playwright suite, and uploads the HTML report. No account or repository secrets are required: the valid-login test creates its own user, and the invalid-login test uses non-empty default values.
 
 ## Notes
 
-ParaBank is a public demo application, so availability and behavior may change independently of this project. The successful-login scenario depends on a working demo account, and the registration scenario remains intentionally skipped for now.
+ParaBank is a public demo application, so availability and behavior may change independently of this project. Tests that register users depend on the demo service accepting registrations.
