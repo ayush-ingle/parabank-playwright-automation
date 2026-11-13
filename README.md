@@ -86,7 +86,12 @@ Test results and generated reports are local output and are excluded from Git.
 
 ## CI
 
-The GitHub Actions workflow installs dependencies and Chromium, runs the Playwright suite, and uploads the HTML report. The successful-login test requires a valid demo account. Configure the CI workflow to provide `PARABANK_VALID_USERNAME` and `PARABANK_VALID_PASSWORD` as repository secrets before relying on that test in CI.
+The GitHub Actions workflow installs dependencies and Chromium, runs the Playwright suite, and uploads the HTML report. It reads these GitHub Actions repository secrets:
+
+- `PARABANK_VALID_USERNAME` and `PARABANK_VALID_PASSWORD`: a working ParaBank demo account.
+- `PARABANK_INVALID_USERNAME` and `PARABANK_INVALID_PASSWORD`: values for the rejected-login test.
+
+Add them under **Settings → Secrets and variables → Actions** for the repository. Don’t commit real credentials. Secrets are not available to workflows triggered by pull requests from forks, so the credential-dependent tests need to be handled separately for those runs.
 
 ## Notes
 

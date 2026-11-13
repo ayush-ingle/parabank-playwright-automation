@@ -18,6 +18,11 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
+      env:
+        PARABANK_VALID_USERNAME: ${{ secrets.PARABANK_VALID_USERNAME }}
+        PARABANK_VALID_PASSWORD: ${{ secrets.PARABANK_VALID_PASSWORD }}
+        PARABANK_INVALID_USERNAME: ${{ secrets.PARABANK_INVALID_USERNAME }}
+        PARABANK_INVALID_PASSWORD: ${{ secrets.PARABANK_INVALID_PASSWORD }}
       run: npx playwright test
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
