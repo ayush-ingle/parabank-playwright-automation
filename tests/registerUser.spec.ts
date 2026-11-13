@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { UserRegistrationPage } from '../pages/UserRegistrationPage';
 import { TestDataGenerator } from '../utils/testDataGenerator';
 
-test.skip('User registration', async ({ page }) => {
+test('User registration', async ({ page }) => {
 
     const registrationPage = new UserRegistrationPage(page);
     const userData = TestDataGenerator.generateUserData();
